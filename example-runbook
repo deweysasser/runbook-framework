@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# this ugly magic will find the runbook-framework.sh if it's on the path or in the same directory as the runbook
+source runbook-framework.sh > /dev/null 2>&1 || source "$(dirname $0)/runbook-framework.sh"
+
+# declare that we use parameters 'env' and 'version', and set a default for 'env'
+parameters env version
+env="staging"
+
+# Implement the runbook.
+# the documentation block for this function documents what the runbook does overall.  The first line is the quick
+# summary, while the entire paragraph will be printed with --help
+runbook() {
+  step "Step One"
+  step "Step Two, on $env" echo "set $env=$version"
+  step "Wait for something to happen" sleep 10
+  step "Run a function" run-function
+  step "Last thing we can do automatically" echo "Version is $version"
+  step "bring it on home"
+  step "this one will fail" fail_me
+}
+
+fail_me() {
+  echo "it's time we stop"
+  echo "Hey, what's that sound"
+  echo "Everybody look, what's going down?"
+  false
+}
+run-function() {
+  echo "This is a function"
+}
+
+main "$@"

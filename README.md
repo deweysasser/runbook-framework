@@ -5,7 +5,7 @@
 
 ## What is it?
 
-A shell (bash) framework to implement run books scripts that help move from fully manual to fully
+A shell (bash) framework to implement run book scripts that help move from fully manual to fully
 automated processes.
 
 ## Background
@@ -29,22 +29,26 @@ useful way.
 
 Be sure to read the ["important details"](#important-details) section.
 
-
 ### Writing the script
+
 Create a script that looks like this:
 
 ```shell
 #!/bin/bash
 
-. runbook-framework.sh
+source runbook-framework.sh
 
-parameters="foo bar"
-foo="some default value"
+parameters p1 p2
+p1="some default value"
 
+# Here's where you put your actual runbook steps
 runbook() {
   step "This is a manual step and you'll get a prompt"
   step "This is an automated step" some-command
 }
+
+# This must be the last line in your file
+main "$@"
 ```
 
 Of course, the steps should be doing whatever it is you need.  `some-command` can be a function you
@@ -57,8 +61,9 @@ executed. The status of all commands will be printed as they are executed.
 
 The framework provides some overall features, including
 
-* -help -- show how to run this runbook, including the parameters
-* -show -- show the checklist *without* executing it
+* -help|-h -- show how to run this runbook, including the parameters
+* -doc -- show the checklist *without* executing it
+* -verbose|-v -- show the output of each command as it happens
 
 ### What happened to the output?
 
@@ -76,7 +81,6 @@ The short form is:  unexpanded variables will be an error, any error (that's not
 will stop the script, and it counts errors in the middle of a pipeline, not just the result of the
 last command in the pipeline.
 
-
 ## Passing Parameters
 
 You can set the `parameters` variable to a list of parameters you want to use in your script. They
@@ -86,6 +90,47 @@ an underscore ('_') are reserved.
 When you call the script, you may pass these variables on the command line as command line options.
 If any of them are unset, the script will stop. So, if you want a default value, make sure you set
 it.
+
+## Examples
+
+### Just try to run it
+
+```shell
+$ ./example-runbook
+Parameter 'version' required
+Usage: ./example-runbook [-h|-help] [-show] [--env=VALUE] --version=VALUE 
+Defaults:
+   env = staging
+```
+
+### Get some documentation on the process
+
+```shell
+$ ./example-runbook  --version=1.2.3 -doc
+1: Step One
+2: Step Two, on staging
+3: Wait for something to happen
+4: Run a function
+5: Last thing we can do automatically
+6: bring it on home
+7: this one will fail
+```
+
+### Actually run the runbook
+
+```shell
+$ ./example-runbook  --version=1.2.3
+ 1: (00:52) Step One...(press enter when done) (5 s) DONE
+ 2: (00:52) Step Two, on staging... (0 s) DONE
+ 3: (00:52) Wait for something to happen... (10 s) DONE
+ 4: (00:52) Run a function... (0 s) DONE
+ 5: (00:52) Last thing we can do automatically... (0 s) DONE
+ 6: (00:52) bring it on home...(press enter when done) (12 s) DONE
+ 7: (00:53) this one will fail... (0 s) FAILED
+    >> it's time we stop
+    >> Hey, what's that sound
+    >> Everybody look, what's going down?
+```
 
 ## The Future
 
