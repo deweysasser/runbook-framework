@@ -134,5 +134,5 @@ $ ./example-runbook  --version=1.2.3
 
 ## The Future
 
-* it would be really nifty to support a `-document` argument that prints documentation about the
-  runbook.
+* the -doc argument should extract some documentation from the comment blocks and include it.
+* can we do some kind of time estimate and make that useful information?
