@@ -27,7 +27,7 @@ runbook() {
 
 And you can run it and get
 
-![runbook example](docs/runbooks-screenshot.png)
+![runbook example](https://github.com/deweysasser/runbook-framework/blob/master/docs/runbooks-screenshot.png?raw=true)
 
 Or if you just need to produce some documentation, you can get
 ```text
@@ -96,9 +96,9 @@ executed. The status of all commands will be printed as they are executed.
 
 The framework provides some overall features, including
 
-* -help|-h -- show how to run this runbook, including the parameters
-* -doc -- show the checklist *without* executing it
-* -verbose|-v -- show the output of each command as it happens
+ * -help or -h -- show how to run this runbook, including the parameters
+ * -doc -- show the checklist *without* executing it
+ * -verbose or -v -- show the output of each command as it happens
 
 ### What happened to the output?
 
