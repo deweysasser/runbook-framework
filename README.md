@@ -5,8 +5,43 @@
 
 ## What is it?
 
-A shell (bash) framework to implement run book scripts that help move from fully manual to fully
+A shell (bash) framework to implement runbook scripts that help move from fully manual to fully
 automated processes.
+
+Based on the clever concept of
+a [Do Nothing Script](https://blog.danslimmon.com/2019/07/15/do-nothing-scripting-the-key-to-gradual-automation/),
+provide some structure for the script which allows & encourages documentation and useful tracking at run time.
+
+You write this code:
+```shell
+runbook() {
+  step "Step One"
+  step "Step Two, on $env" echo "set $env=$version"
+  step "Wait for something to happen" sleep 10
+  step "Run a function" run-function
+  step "Last thing we can do automatically" echo "Version is $version"
+  step "bring it on home"
+  step "this one will fail" fail_me
+}
+```
+
+And you can run it and get
+
+![runbook example](docs/runbooks-screenshot.png)
+
+Or if you just need to produce some documentation, you can get
+```text
+$ ./example-runbook --version=1.2.3 -doc
+1: Step One
+2: Step Two, on staging
+3: Wait for something to happen
+4: Run a function
+5: Last thing we can do automatically
+6: bring it on home
+7: this one will fail
+$
+```
+
 
 ## Background
 
