@@ -135,4 +135,12 @@ $ ./example-runbook  --version=1.2.3
 ## The Future
 
 * the -doc argument should extract some documentation from the comment blocks and include it.
-* can we do some kind of time estimate and make that useful information?
+* can we do some kind of time estimate and make that useful information? ([discussion here](https://github.com/deweysasser/runbook-framework/discussions/9))
+
+### Documentation
+
+I'd like to make a "generate a fairly complete markdown document describing the process" be a feature.  The question is how to do that without obscuring the actual logic.  See [the github discussion](https://github.com/deweysasser/runbook-framework/discussions/6)
+
+### Managing state
+
+Would it be interesting to manage the current state of "a run"  in a persistent way, particularly so it could be resumed later if e.g. a step failed or something? ([discussion here](https://github.com/deweysasser/runbook-framework/discussions/10))
