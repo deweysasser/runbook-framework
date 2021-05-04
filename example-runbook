@@ -1,7 +1,4 @@
-#!/usr/bin/env bash
-
-# this ugly magic will find the runbook-framework.sh if it's on the path or in the same directory as the runbook
-source runbook-framework.sh > /dev/null 2>&1 || source "$(dirname $0)/runbook-framework.sh"
+#!/usr/bin/env runbook
 
 # declare that we use parameters 'env' and 'version', and set a default for 'env'
 parameters env version
@@ -26,8 +23,9 @@ fail_me() {
   echo "Everybody look, what's going down?"
   false
 }
+
 run-function() {
   echo "This is a function"
 }
 
-main "$@"
+

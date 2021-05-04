@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# Make sure we pick up a modern bash, and not the default MacOS bash
+
 # Runbook Framework
 # See github.com/deweysasser/runbook-framework
 
@@ -26,7 +29,48 @@ mkdir -p "$_tmp"
 
 # the main event
 main() {
+
+  first_arg="$1"
+  shift
+
+  case "$first_arg" in
+  list) echo "List not implemented";;
+  doc) echo "Doc not implemented";;
+  run)
+    local file="$1"
+    shift
+    _run_runbook "$(_resolve_path "$file")" "$@"
+    ;;
+  *) _run_runbook "$(_resolve_path "$first_arg")" "$@";
+  esac
+}
+
+# Resolve a name to a file, by searching PATH or RUNBOOK_PATH
+_resolve_path() {
+  if [ -f "$1" ]; then
+    echo "$1"
+    return
+  fi
+
+  # TODO: handle path components with spaces in them
+  for d in $(echo $RUNBOOK_PATH $PATH | tr : ' '); do
+    if [ -f "$d/$1" ] ; then
+      echo "$d/$1"
+      return
+    fi
+  done
+
+  echo "ERROR:  could not find runbook $1"
+  exit 2
+}
+
+_run_runbook() {
   local params
+
+  # shellcheck disable=SC1090
+  source "$1"
+  shift
+
   while [ -n "$*" ]; do
     case $1 in
     -doc) _mode="doc" ;;
@@ -197,3 +241,6 @@ EOF
 _extract_runbook_doc() {
   echo ""
 }
+
+
+main "$@"
