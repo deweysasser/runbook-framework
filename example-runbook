@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # this ugly magic will find the runbook-framework.sh if it's on the path or in the same directory as the runbook
 source runbook-framework.sh > /dev/null 2>&1 || source "$(dirname $0)/runbook-framework.sh"

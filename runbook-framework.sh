@@ -1,6 +1,12 @@
 # Runbook Framework
 # See github.com/deweysasser/runbook-framework
 
+# Before we do anything else, make sure we have the right version of bash
+if [ -z "${BASH_VERSINFO}" ] || [ -z "${BASH_VERSINFO[0]}" ] || [ "${BASH_VERSINFO[0]}" -lt 5 ] ; then
+  echo "Bash version 5 or higher required"
+  exit 127
+fi
+
 set -ueo pipefail
 
 # run or doc?
