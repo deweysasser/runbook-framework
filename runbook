@@ -5,10 +5,13 @@
 # See github.com/deweysasser/runbook-framework
 
 # Before we do anything else, make sure we have the right version of bash
-if [ -z "${BASH_VERSINFO}" ] || [ -z "${BASH_VERSINFO[0]}" ] || [ "${BASH_VERSINFO[0]}" -lt 5 ] ; then
+if [ -z "${BASH_VERSINFO}" ] || [ -z "${BASH_VERSINFO[0]}" ] || [ "${BASH_VERSINFO[0]}" -lt 5 ]; then
   echo "Bash version 5 or higher required"
   exit 127
 fi
+
+# Make sure it has a value of some kind
+RUNBOOK_PATH="${RUNBOOK_PATH:-}"
 
 set -ueo pipefail
 
@@ -30,19 +33,49 @@ mkdir -p "$_tmp"
 # the main event
 main() {
 
-  first_arg="$1"
-  shift
+  first_arg="${1:-help}"
+  shift || true # it appears that shift fails if there are no more args -- that's odd
 
   case "$first_arg" in
-  list) echo "List not implemented";;
-  doc) echo "Doc not implemented";;
+  help) _help; exit;;
+  list) _list; exit;;
+  doc) echo "Doc not implemented" ;;
   run)
     local file="$1"
     shift
     _run_runbook "$(_resolve_path "$file")" "$@"
     ;;
-  *) _run_runbook "$(_resolve_path "$first_arg")" "$@";
+  *) _run_runbook "$(_resolve_path "$first_arg")" "$@" ;;
   esac
+}
+
+_help() {
+  cat <<EOF
+Usage:
+  $0 [help|list|doc]
+  $0 run <NAME> -- locate (on the PATH or RUNBOOK_PATH) the named runbook file and run it
+  $0 <FILE> -- run the named file as a runbook
+EOF
+}
+# Show a list of all runbooks (and the first line of their doc)
+_list() {
+  for v in "$(pwd)" "$RUNBOOK_PATH"  ; do
+    if [ -n "$v" ]; then
+      echo "$v" | tr : "\n" | while read -r d; do
+        if [ -d "$d" ] ; then
+          find "$d" -maxdepth 1 -type f -size -50k -print0 | ( xargs -0 grep -l -E '^#!.*runbook' 2>/dev/null || true) \
+          | while read -r file; do
+            printf "%s -- %s\n" "$file" "$(_find_docline "$file")"
+            done
+        fi
+      done
+    fi
+  done | sort -u
+}
+
+# find the first line of comment from a file and return it, stripped of the comment marker
+_find_docline() {
+  awk -F \# '/^ *##/{print $3; exit}' < "$1" || echo ""
 }
 
 # Resolve a name to a file, by searching PATH or RUNBOOK_PATH
@@ -52,9 +85,9 @@ _resolve_path() {
     return
   fi
 
-  # TODO: handle path components with spaces in them
-  for d in $(echo $RUNBOOK_PATH $PATH | tr : ' '); do
-    if [ -f "$d/$1" ] ; then
+  # TODO: handle path components with spaces in them -- _list has the pattern to use
+  for d in $(echo . "$RUNBOOK_PATH" "$PATH" | tr : ' '); do
+    if [ -f "$d/$1" ]; then
       echo "$d/$1"
       return
     fi
@@ -241,6 +274,5 @@ EOF
 _extract_runbook_doc() {
   echo ""
 }
-
 
 main "$@"

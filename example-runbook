@@ -1,4 +1,7 @@
 #!/usr/bin/env runbook
+## an example runbook for documentation and debugging purposes
+
+# '#' starts a normal script comment, and '##' starts a doc comment
 
 # declare that we use parameters 'env' and 'version', and set a default for 'env'
 parameters env version
